@@ -3,12 +3,13 @@ module github.com/mpieters3/terraform-provider-crypto
 go 1.24.0
 
 require (
-	github.com/hashicorp/terraform-plugin-framework v1.16.1
+	github.com/hashicorp/terraform-plugin-framework v1.17.0
 	github.com/hashicorp/terraform-plugin-go v0.29.0
-	github.com/hashicorp/terraform-plugin-log v0.9.0
+	github.com/hashicorp/terraform-plugin-log v0.10.0
 	github.com/hashicorp/terraform-plugin-testing v1.13.3
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
+	software.sslmate.com/src/go-pkcs12 v0.6.0
 )
 
 require (
@@ -63,5 +64,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/grpc v1.75.1 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
-	software.sslmate.com/src/go-pkcs12 v0.6.0 // indirect
 )
