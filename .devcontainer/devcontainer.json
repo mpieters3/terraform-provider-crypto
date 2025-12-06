@@ -9,6 +9,16 @@
 	"features": {
 		"terraform": {
 			"version": "latest"
+		},
+		"node": {
+			"version": "lts"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Anthropic.claude-code"
+			]
 		}
 	},
 

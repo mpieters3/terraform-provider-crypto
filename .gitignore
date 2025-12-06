@@ -34,3 +34,6 @@ terraform-provider-crypto
 
 # Keep windows files with windows line endings
 *.winfile eol=crlf
+
+.claude/
+.claude/*
