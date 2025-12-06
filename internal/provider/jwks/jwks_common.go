@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// JWK represents a JSON Web Key
+// JWK represents a JSON Web Key.
 type JWK struct {
 	Kty string   `json:"kty"`           // Key Type (RSA, EC, oct)
 	Use string   `json:"use,omitempty"` // Public Key Use (sig, enc)
@@ -32,11 +32,11 @@ type JWK struct {
 	X5c []string `json:"x5c,omitempty"` // X.509 Certificate Chain
 
 	// RSA specific
-	N string `json:"n,omitempty"` // Modulus
-	E string `json:"e,omitempty"` // Exponent
-	D string `json:"d,omitempty"` // Private Exponent
-	P string `json:"p,omitempty"` // First Prime Factor
-	Q string `json:"q,omitempty"` // Second Prime Factor
+	N  string `json:"n,omitempty"`  // Modulus
+	E  string `json:"e,omitempty"`  // Exponent
+	D  string `json:"d,omitempty"`  // Private Exponent
+	P  string `json:"p,omitempty"`  // First Prime Factor
+	Q  string `json:"q,omitempty"`  // Second Prime Factor
 	Dp string `json:"dp,omitempty"` // First Factor CRT Exponent
 	Dq string `json:"dq,omitempty"` // Second Factor CRT Exponent
 	Qi string `json:"qi,omitempty"` // First CRT Coefficient
@@ -48,7 +48,7 @@ type JWK struct {
 	// D already defined above for private key
 }
 
-// JWKS represents a JSON Web Key Set
+// JWKS represents a JSON Web Key Set.
 type JWKS struct {
 	Keys []JWK `json:"keys"`
 }
@@ -65,7 +65,7 @@ type KeyEntry struct {
 
 // JWKSModel describes the common data model for JWKS resources, data sources, and ephemeral resources.
 type JWKSModel struct {
-	Keys    types.List   `tfsdk:"keys"`
+	Keys     types.List   `tfsdk:"keys"`
 	BaseJWKS types.String `tfsdk:"base_jwks"`
 	JWKS     types.String `tfsdk:"jwks"`
 	Id       types.String `tfsdk:"id"`
@@ -96,17 +96,17 @@ func generateRandomKID() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-// base64URLEncode encodes bytes to base64 URL encoding without padding
+// base64URLEncode encodes bytes to base64 URL encoding without padding.
 func base64URLEncode(data []byte) string {
 	return base64.RawURLEncoding.EncodeToString(data)
 }
 
-// base64URLDecode decodes base64 URL encoded string
+// base64URLDecode decodes base64 URL encoded string.
 func base64URLDecode(data string) ([]byte, error) {
 	return base64.RawURLEncoding.DecodeString(data)
 }
 
-// rsaPrivateKeyToJWK converts an RSA private key to JWK format
+// rsaPrivateKeyToJWK converts an RSA private key to JWK format.
 func rsaPrivateKeyToJWK(key *rsa.PrivateKey, kid, alg, use string, certs []string) JWK {
 	jwk := JWK{
 		Kty: "RSA",
@@ -129,20 +129,7 @@ func rsaPrivateKeyToJWK(key *rsa.PrivateKey, kid, alg, use string, certs []strin
 	return jwk
 }
 
-// rsaPublicKeyToJWK converts an RSA public key to JWK format (for public key only scenarios)
-func rsaPublicKeyToJWK(key *rsa.PublicKey, kid, alg, use string, certs []string) JWK {
-	return JWK{
-		Kty: "RSA",
-		Kid: kid,
-		Alg: alg,
-		Use: use,
-		N:   base64URLEncode(key.N.Bytes()),
-		E:   base64URLEncode(big.NewInt(int64(key.E)).Bytes()),
-		X5c: certs,
-	}
-}
-
-// ecPrivateKeyToJWK converts an EC private key to JWK format
+// ecPrivateKeyToJWK converts an EC private key to JWK format.
 func ecPrivateKeyToJWK(key *ecdsa.PrivateKey, kid, alg, use string, certs []string) JWK {
 	crv := ""
 	switch key.Curve.Params().Name {
@@ -171,32 +158,6 @@ func ecPrivateKeyToJWK(key *ecdsa.PrivateKey, kid, alg, use string, certs []stri
 	jwk.D = base64URLEncode(key.D.Bytes())
 
 	return jwk
-}
-
-// ecPublicKeyToJWK converts an EC public key to JWK format (for public key only scenarios)
-func ecPublicKeyToJWK(key *ecdsa.PublicKey, kid, alg, use string, certs []string) JWK {
-	crv := ""
-	switch key.Curve.Params().Name {
-	case "P-256":
-		crv = "P-256"
-	case "P-384":
-		crv = "P-384"
-	case "P-521":
-		crv = "P-521"
-	default:
-		crv = key.Curve.Params().Name
-	}
-
-	return JWK{
-		Kty: "EC",
-		Kid: kid,
-		Alg: alg,
-		Use: use,
-		Crv: crv,
-		X:   base64URLEncode(key.X.Bytes()),
-		Y:   base64URLEncode(key.Y.Bytes()),
-		X5c: certs,
-	}
 }
 
 // createJWKS handles the common logic for creating a JWKS from the model data.
@@ -337,7 +298,7 @@ func createJWKS(ctx context.Context, data *JWKSModel, diagnostics *diag.Diagnost
 	tflog.Trace(ctx, operation+" a JWKS")
 }
 
-// jwkToPrivateKeyPEM converts a JWK to a PEM-encoded private key
+// jwkToPrivateKeyPEM converts a JWK to a PEM-encoded private key.
 func jwkToPrivateKeyPEM(jwk JWK) (string, error) {
 	var privateKey interface{}
 	var err error
@@ -375,14 +336,15 @@ func jwkToPrivateKeyPEM(jwk JWK) (string, error) {
 				return "", fmt.Errorf("failed to decode Q: %w", err)
 			}
 
-			privateKey = &rsa.PrivateKey{
+			rsaPrivKey := &rsa.PrivateKey{
 				PublicKey: *pubKey,
 				D:         new(big.Int).SetBytes(d),
 				Primes:    []*big.Int{new(big.Int).SetBytes(p), new(big.Int).SetBytes(q)},
 			}
 
 			// Precompute values
-			privateKey.(*rsa.PrivateKey).Precompute()
+			rsaPrivKey.Precompute()
+			privateKey = rsaPrivKey
 		} else {
 			// Public key only
 			privateKey = pubKey
@@ -473,7 +435,7 @@ func jwkToPrivateKeyPEM(jwk JWK) (string, error) {
 	return string(pem.EncodeToMemory(pemBlock)), nil
 }
 
-// jwkToCertificatesPEM converts the x5c field from a JWK to PEM-encoded certificates
+// jwkToCertificatesPEM converts the x5c field from a JWK to PEM-encoded certificates.
 func jwkToCertificatesPEM(jwk JWK) ([]string, error) {
 	certs := []string{}
 

@@ -150,23 +150,6 @@ func TestAccP12ResourceWithBaseP12(t *testing.T) {
 	})
 }
 
-func testAccP12ResourceConfigWithInvalidBase(baseP12, privateKey, certificate, chainCert string) string {
-	return fmt.Sprintf(`
-resource "crypto_p12" "test" {
-  base_p12 = %[1]q
-  entries = [
-    {
-      private_key       = %[2]q
-      certificate       = %[3]q
-      certificate_chain = [%[4]q]
-      alias             = "test-cert"
-    }
-  ]
-  password = "testpassword"
-}
-`, baseP12, privateKey, certificate, chainCert)
-}
-
 func testVerifyP12Content(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
