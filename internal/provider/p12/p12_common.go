@@ -233,6 +233,24 @@ func createP12(ctx context.Context, data *P12Model, diagnostics *diag.Diagnostic
 func P12ToPEM(p12Data []byte, password string) (*util.KeyCertChain, error) {
 	privateKey, certificate, caCerts, err := pkcs12.DecodeChain(p12Data, password)
 	if err != nil {
+		// If DecodeChain fails with "private key missing", try DecodeTrustStore
+		// to handle P12 files that only contain certificates (trust stores)
+		if err.Error() == "pkcs12: private key missing" {
+			trustCerts, err := pkcs12.DecodeTrustStore(p12Data, password)
+			if err != nil {
+				return nil, fmt.Errorf("failed to decode P12 as trust store: %w", err)
+			}
+
+			result := &util.KeyCertChain{}
+			// Convert trust store certificates to PEM
+			for _, cert := range trustCerts {
+				result.CertChain = append(result.CertChain, &pem.Block{
+					Type:  "CERTIFICATE",
+					Bytes: cert.Raw,
+				})
+			}
+			return result, nil
+		}
 		return nil, fmt.Errorf("failed to decode P12: %w", err)
 	}
 

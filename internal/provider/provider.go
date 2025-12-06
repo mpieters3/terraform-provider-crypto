@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/mpieters3/terraform-provider-crypto/internal/provider/jks"
+	"github.com/mpieters3/terraform-provider-crypto/internal/provider/jwks"
 	"github.com/mpieters3/terraform-provider-crypto/internal/provider/p12"
 )
 
@@ -59,6 +60,7 @@ func (p *CryptoProvider) Configure(ctx context.Context, req provider.ConfigureRe
 func (p *CryptoProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		jks.NewJKSResource,
+		jwks.NewJWKSResource,
 		p12.NewP12Resource,
 	}
 }
@@ -66,6 +68,7 @@ func (p *CryptoProvider) Resources(ctx context.Context) []func() resource.Resour
 func (p *CryptoProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{
 		jks.NewJKSEphemeralResource,
+		jwks.NewJWKSEphemeralResource,
 		p12.NewP12EphemeralResource,
 	}
 }
@@ -73,6 +76,7 @@ func (p *CryptoProvider) EphemeralResources(ctx context.Context) []func() epheme
 func (p *CryptoProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		jks.NewJKSDataSource,
+		jwks.NewJWKSDataSource,
 		p12.NewP12DataSource,
 	}
 }
