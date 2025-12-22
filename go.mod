@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-testing v1.14.0
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
-	software.sslmate.com/src/go-pkcs12 v0.6.0
+	software.sslmate.com/src/go-pkcs12 v0.7.0
 )
 
 require (
